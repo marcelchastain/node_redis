@@ -1118,14 +1118,20 @@ RedisClient.prototype.eval = RedisClient.prototype.EVAL = function () {
 exports.createClient = function (port_arg, host_arg, options) {
     var port = port_arg || default_port,
         host = host_arg || default_host,
+        default_db = 0,
         redis_client, net_client;
+    var db = options['db'] || default_db;
 
     net_client = net.createConnection(port, host);
 
     redis_client = new RedisClient(net_client, options);
-
+    if (db !== default_db) {
+        redis_client.select(0);
+    }
+        
     redis_client.port = port;
     redis_client.host = host;
+    redis_client.db = db;
 
     return redis_client;
 };
